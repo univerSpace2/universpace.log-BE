@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { configModuleOptions } from './configs/module-options';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { LoggerModule } from './logger/logger.module';
 import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
@@ -10,11 +10,16 @@ import { AllExceptionsFilter } from './filters/all-exceptions.filter';
 @Module({
   imports: [
     ConfigModule.forRoot(configModuleOptions),
-    TypeOrmModule.forRoot({
-      type: 'sqlite',
-      database: 'db.sqlite',
-      entities: [__dirname + '/../**/*.entity.{js,ts}'],
-      synchronize: true,
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        type: 'sqlite',
+        database: 'db.sqlite',
+        entities: [__dirname + '/../**/*.entity.{js,ts}'],
+        synchronize: configService.get<string>('env') === 'development',
+        debug: configService.get<string>('env') === 'development',
+      }),
     }),
     LoggerModule,
   ],
