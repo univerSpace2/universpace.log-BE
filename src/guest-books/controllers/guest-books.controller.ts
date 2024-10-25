@@ -1,7 +1,15 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { GuestBooksService } from './guest-books.service';
-import { CreateGuestBookDto } from './dto/create-guest-book.dto';
-import { UpdateGuestBookDto } from './dto/update-guest-book.dto';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
+import { GuestBooksService } from '../services/guest-books.service';
+import { CreateGuestBookDto } from '../dto/create-guest-book.dto';
+import { UpdateGuestBookDto } from '../dto/update-guest-book.dto';
 
 @Controller('guest-books')
 export class GuestBooksController {
@@ -23,7 +31,10 @@ export class GuestBooksController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateGuestBookDto: UpdateGuestBookDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateGuestBookDto: UpdateGuestBookDto,
+  ) {
     return this.guestBooksService.update(+id, updateGuestBookDto);
   }
 
